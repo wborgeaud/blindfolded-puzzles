@@ -13,7 +13,7 @@ export default function Moves({ moves, starting_color }) {
   }
 
   return (
-    <table>
+    <table style={{ fontSize: "1.3rem" }}>
       <thead>
         <tr>
           <th colSpan="2" style={{ fontWeight: "bolder" }}>
@@ -21,7 +21,7 @@ export default function Moves({ moves, starting_color }) {
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody style={{ fontStyle: "italic" }}>
         {chunks.map((chunk, i) => (
           <tr key={i}>
             <td>{chunk[0]}</td>

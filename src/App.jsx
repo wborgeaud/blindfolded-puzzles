@@ -8,6 +8,7 @@ import React, { Component } from "react";
 import Pieces from "./components/Pieces";
 import MoveForm from "./components/MoveForm";
 import Moves from "./components/Moves";
+import Switches from "./components/Switches";
 import { squareStyle } from "./utils/square-style";
 
 const URL = "http://localhost:8000/puzzles/";
@@ -122,25 +123,34 @@ export default class App extends Component {
             justifyContent: "space-around",
             marginRight: "40px",
             padding: "10px",
-            // boxShadow: "1px 1px",
             backgroundColor: "#999999",
+            width: "100px",
+            minWidth: "100px",
           }}
         >
           <Moves
             moves={this.state.correctMoves}
             starting_color={this.state.turn}
           />
-          <button onClick={this.fetchPuzzle}>New puzzle</button>
-          <button onClick={this.toggleBoard}>Show board</button>
-          {this.state.showBoard && (
-            <>
-              <button onClick={this.toggleSquares}>Show squares</button>
-              <button onClick={this.togglePieces}>Show pieces</button>
-            </>
-          )}
           {this.state.solved && (
-            <div style={{ fontWeight: "bold", color: "green" }}>Solved</div>
+            <div
+              style={{ fontWeight: "bold", color: "green", fontSize: "2rem" }}
+            >
+              Solved
+            </div>
           )}
+          <Switches
+            toggleBoard={this.toggleBoard}
+            toggleSquares={this.toggleSquares}
+            togglePieces={this.togglePieces}
+            showBoard={this.state.showBoard}
+            showSquares={this.state.showSquares}
+            showPieces={this.state.showPieces}
+          />
+          <div>
+            <div>Max number of pieces slider</div>
+            <button onClick={this.fetchPuzzle}>New puzzle</button>
+          </div>
         </div>
 
         <div
@@ -175,11 +185,14 @@ export default class App extends Component {
         {this.state.showBoard && (
           <div style={{ padding: "50px" }}>
             {this.state.showPieces ? (
-              <Chessboard position={this.state.fen} />
+              <Chessboard width="400" position={this.state.fen} />
             ) : this.state.showSquares ? (
-              <Chessboard squareStyles={squareStyle(this.state.game)} />
+              <Chessboard
+                width="400"
+                squareStyles={squareStyle(this.state.game)}
+              />
             ) : (
-              <Chessboard />
+              <Chessboard width="400" />
             )}
           </div>
         )}
