@@ -58,14 +58,22 @@ export default class MoveForm extends Component {
   render() {
     return (
       <div>
-        <form>
+        <form
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <label>
             <input
               style={{
                 borderRadius: "15px",
                 height: "6rem",
                 fontSize: "3rem",
-                width: "10rem",
+                width: "100%",
+                textAlign: "center",
               }}
               placeholder="Move"
               type="text"
@@ -78,6 +86,7 @@ export default class MoveForm extends Component {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
+              width: "50%",
             }}
           >
             <button

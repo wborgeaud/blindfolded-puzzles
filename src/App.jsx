@@ -1,14 +1,19 @@
 import "./App.css";
 
-import Chessboard from "chessboardjsx";
 import * as ChessJS from "chess.js";
 
 import React, { Component } from "react";
 
+import Select from "react-select";
+
+import ChessboardWithHistory from "./components/ChessboardWithHistory";
 import Pieces from "./components/Pieces";
 import MoveForm from "./components/MoveForm";
 import Moves from "./components/Moves";
 import Switches from "./components/Switches";
+import ShowSolution from "./components/ShowSolution";
+import Hint from "./components/Hint";
+import FirstMove from "./components/FirstMove";
 import { squareStyle } from "./utils/square-style";
 
 const URL = "http://localhost:8000/puzzles/";
@@ -30,6 +35,8 @@ export default class App extends Component {
       showSquares: false,
       game: null,
       solved: false,
+      history: [],
+      maxPieces: 5,
     };
 
     this.fetchPuzzle = this.fetchPuzzle.bind(this);
@@ -37,12 +44,16 @@ export default class App extends Component {
     this.togglePieces = this.togglePieces.bind(this);
     this.toggleSquares = this.toggleSquares.bind(this);
     this.makeMove = this.makeMove.bind(this);
+    this.endGame = this.endGame.bind(this);
+    this.historyPush = this.historyPush.bind(this);
+    this.historyPop = this.historyPop.bind(this);
   }
 
   async fetchPuzzle() {
-    let data = await fetch(URL + "?" + new URLSearchParams({ max_pieces: 5 }));
+    let data = await fetch(
+      URL + "?" + new URLSearchParams({ max_pieces: this.state.maxPieces })
+    );
     data = await data.json();
-    console.log(data);
     const game = new Chess(data.starting_fen);
     this.setState({
       ...data,
@@ -53,6 +64,8 @@ export default class App extends Component {
       game,
       solved: false,
       correctMoves: [],
+      history: [],
+      maxPieces: this.state.maxPieces,
     });
   }
 
@@ -84,6 +97,10 @@ export default class App extends Component {
   }
 
   makeMove() {
+    const history = [...this.state.history];
+    while (history.length > 0) {
+      this.state.game.move(history.pop());
+    }
     this.state.game.move(this.state.moves[0]);
     if (this.state.moves.length === 1) {
       this.setState({
@@ -91,6 +108,7 @@ export default class App extends Component {
         showBoard: true,
         showPieces: true,
         correctMoves: [...this.state.correctMoves, this.state.moves[0]],
+        history: [...this.state.history, this.state.moves[0]],
         solved: true,
       });
     } else {
@@ -102,8 +120,46 @@ export default class App extends Component {
           ...this.state.correctMoves,
           ...this.state.moves.slice(0, 2),
         ],
+        history: [...this.state.history, ...this.state.moves.slice(0, 2)],
       });
     }
+  }
+
+  endGame() {
+    if (this.state.solved) {
+      return;
+    }
+    for (const m of this.state.moves) {
+      this.state.game.move(m);
+      this.setState({
+        fen: this.state.game.fen(),
+        showBoard: true,
+        showPieces: true,
+        correctMoves: [...this.state.correctMoves, ...this.state.moves],
+        history: [...this.state.history, ...this.state.moves],
+        solved: true,
+      });
+    }
+  }
+
+  historyPush() {
+    const m = this.state.game.undo();
+    if (m === null) {
+      return;
+    }
+    this.setState({
+      history: [...this.state.history, m],
+      fen: this.state.game.fen(),
+    });
+  }
+
+  historyPop() {
+    const history = [...this.state.history];
+    if (history.length === 0) {
+      return;
+    }
+    this.state.game.move(history.pop());
+    this.setState({ history, fen: this.state.game.fen() });
   }
 
   render() {
@@ -113,43 +169,88 @@ export default class App extends Component {
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
+          height: "100%",
         }}
       >
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            height: "80vh",
-            justifyContent: "space-around",
-            marginRight: "40px",
-            padding: "10px",
+            height: "100%",
             backgroundColor: "#999999",
-            width: "100px",
-            minWidth: "100px",
+            marginRight: "40px",
           }}
         >
-          <Moves
-            moves={this.state.correctMoves}
-            starting_color={this.state.turn}
-          />
-          {this.state.solved && (
-            <div
-              style={{ fontWeight: "bold", color: "green", fontSize: "2rem" }}
-            >
-              Solved
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-around",
+              width: "100px",
+              minWidth: "100px",
+              height: "80%",
+              padding: "10px",
+            }}
+          >
+            <Moves
+              moves={this.state.correctMoves}
+              starting_color={this.state.turn}
+            />
+            {this.state.solved && (
+              <div
+                style={{ fontWeight: "bold", color: "green", fontSize: "2rem" }}
+              >
+                Solved
+              </div>
+            )}
+            <Switches
+              toggleBoard={this.toggleBoard}
+              toggleSquares={this.toggleSquares}
+              togglePieces={this.togglePieces}
+              showBoard={this.state.showBoard}
+              showSquares={this.state.showSquares}
+              showPieces={this.state.showPieces}
+            />
+            <div>
+              <div>Maximum number of pieces</div>
+              <Select
+                options={[
+                  { value: 3, label: 3 },
+                  { value: 4, label: 4 },
+                  { value: 5, label: 5 },
+                  { value: 6, label: 6 },
+                  { value: 7, label: 7 },
+                  { value: 8, label: 8 },
+                  { value: 9, label: 9 },
+                  { value: 10, label: 10 },
+                  { value: 11, label: 11 },
+                  { value: 12, label: 12 },
+                  { value: 13, label: 13 },
+                  { value: 14, label: 14 },
+                  { value: 15, label: 15 },
+                ]}
+                onChange={({ value }) => {
+                  this.setState({ maxPieces: value });
+                }}
+                value={{
+                  value: this.state.maxPieces,
+                  label: this.state.maxPieces,
+                }}
+              />
+
+              <button
+                style={{
+                  borderRadius: "15px",
+                  color: "white",
+                  fontWeight: "bold",
+                  fontSize: "1.2rem",
+                  padding: "10px",
+                  marginTop: "50px",
+                }}
+                className="hovergreen"
+                onClick={this.fetchPuzzle}
+              >
+                New puzzle
+              </button>
             </div>
-          )}
-          <Switches
-            toggleBoard={this.toggleBoard}
-            toggleSquares={this.toggleSquares}
-            togglePieces={this.togglePieces}
-            showBoard={this.state.showBoard}
-            showSquares={this.state.showSquares}
-            showPieces={this.state.showPieces}
-          />
-          <div>
-            <div>Max number of pieces slider</div>
-            <button onClick={this.fetchPuzzle}>New puzzle</button>
           </div>
         </div>
 
@@ -160,6 +261,7 @@ export default class App extends Component {
             height: "80vh",
             justifyContent: "space-around",
             flexGrow: 2,
+            alignItems: "center",
           }}
         >
           <div
@@ -181,18 +283,40 @@ export default class App extends Component {
             id={this.state.id}
             movesLeft={this.state.moves.length}
           />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <Hint firstMove={this.state.moves[0]} />
+            <FirstMove onClick={this.makeMove} />
+            <ShowSolution onClick={this.endGame} />
+          </div>
         </div>
         {this.state.showBoard && (
           <div style={{ padding: "50px" }}>
             {this.state.showPieces ? (
-              <Chessboard width="400" position={this.state.fen} />
+              <ChessboardWithHistory
+                width="400"
+                position={this.state.fen}
+                historyPop={this.historyPop}
+                historyPush={this.historyPush}
+              />
             ) : this.state.showSquares ? (
-              <Chessboard
+              <ChessboardWithHistory
                 width="400"
                 squareStyles={squareStyle(this.state.game)}
+                historyPop={this.historyPop}
+                historyPush={this.historyPush}
               />
             ) : (
-              <Chessboard width="400" />
+              <ChessboardWithHistory
+                width="400"
+                historyPop={this.historyPop}
+                historyPush={this.historyPush}
+              />
             )}
           </div>
         )}
