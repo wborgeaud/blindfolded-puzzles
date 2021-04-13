@@ -14,9 +14,10 @@ import Switches from "./components/Switches";
 import ShowSolution from "./components/ShowSolution";
 import Hint from "./components/Hint";
 import FirstMove from "./components/FirstMove";
+import Thumbs from "./components/Thumbs";
 import { squareStyle } from "./utils/square-style";
 
-const URL = "http://localhost:8000/puzzles/";
+export const URL = "http://localhost:8000/puzzles/";
 
 const Chess = typeof ChessJS === "function" ? ChessJS : ChessJS.Chess;
 
@@ -37,6 +38,7 @@ export default class App extends Component {
       solved: false,
       history: [],
       maxPieces: 5,
+      puzzle_id: 0,
     };
 
     this.fetchPuzzle = this.fetchPuzzle.bind(this);
@@ -66,6 +68,7 @@ export default class App extends Component {
       correctMoves: [],
       history: [],
       maxPieces: this.state.maxPieces,
+      puzzle_id: data.id,
     });
   }
 
@@ -97,6 +100,9 @@ export default class App extends Component {
   }
 
   makeMove() {
+    if (this.state.solved) {
+      return;
+    }
     const history = [...this.state.history];
     while (history.length > 0) {
       this.state.game.move(history.pop());
@@ -190,25 +196,6 @@ export default class App extends Component {
               padding: "10px",
             }}
           >
-            <Moves
-              moves={this.state.correctMoves}
-              starting_color={this.state.turn}
-            />
-            {this.state.solved && (
-              <div
-                style={{ fontWeight: "bold", color: "green", fontSize: "2rem" }}
-              >
-                Solved
-              </div>
-            )}
-            <Switches
-              toggleBoard={this.toggleBoard}
-              toggleSquares={this.toggleSquares}
-              togglePieces={this.togglePieces}
-              showBoard={this.state.showBoard}
-              showSquares={this.state.showSquares}
-              showPieces={this.state.showPieces}
-            />
             <div>
               <div>Maximum number of pieces</div>
               <Select
@@ -251,6 +238,20 @@ export default class App extends Component {
                 New puzzle
               </button>
             </div>
+            {this.state.solved && (
+              <>
+                <Thumbs puzzle_id={this.state.puzzle_id} />
+                <div className="solvedname">Solved</div>
+              </>
+            )}
+            <Switches
+              toggleBoard={this.toggleBoard}
+              toggleSquares={this.toggleSquares}
+              togglePieces={this.togglePieces}
+              showBoard={this.state.showBoard}
+              showSquares={this.state.showSquares}
+              showPieces={this.state.showPieces}
+            />
           </div>
         </div>
 
@@ -271,12 +272,30 @@ export default class App extends Component {
               textAlign: "center",
             }}
           >
-            {this.state.turn === "W" ? "White " : "Black "} to play
+            {this.state.turn === "W" ? (
+              <span className="whitename">White</span>
+            ) : (
+              <span className="blackname">Black</span>
+            )}{" "}
+            to play
           </div>
-          <Pieces
-            white_pieces={this.state.white_pieces}
-            black_pieces={this.state.black_pieces}
-          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "50%",
+            }}
+          >
+            <Pieces
+              white_pieces={this.state.white_pieces}
+              black_pieces={this.state.black_pieces}
+            />
+            <Moves
+              moves={this.state.correctMoves}
+              starting_color={this.state.turn}
+            />
+          </div>
           <MoveForm
             correct={this.state.moves[0]}
             makeMove={this.makeMove}
@@ -296,24 +315,24 @@ export default class App extends Component {
           </div>
         </div>
         {this.state.showBoard && (
-          <div style={{ padding: "50px" }}>
+          <div style={{ padding: "50px", resize: "both", overflow: "auto" }}>
             {this.state.showPieces ? (
               <ChessboardWithHistory
-                width="400"
+                width={Math.round(window.innerWidth * 0.3)}
                 position={this.state.fen}
                 historyPop={this.historyPop}
                 historyPush={this.historyPush}
               />
             ) : this.state.showSquares ? (
               <ChessboardWithHistory
-                width="400"
+                width={Math.round(window.innerWidth * 0.3)}
                 squareStyles={squareStyle(this.state.game)}
                 historyPop={this.historyPop}
                 historyPush={this.historyPush}
               />
             ) : (
               <ChessboardWithHistory
-                width="400"
+                width={Math.round(window.innerWidth * 0.3)}
                 historyPop={this.historyPop}
                 historyPush={this.historyPush}
               />

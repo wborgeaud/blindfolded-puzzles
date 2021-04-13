@@ -13,11 +13,11 @@ export default function Moves({ moves, starting_color }) {
   }
 
   return (
-    <table style={{ fontSize: "1.3rem" }}>
+    <table style={{ fontSize: "1.3rem", width: "150px", textAlign: "center" }}>
       <thead>
         <tr>
           <th colSpan="2" style={{ fontWeight: "bolder" }}>
-            Moves
+            Moves <hr style={{ backgroundColor: "black" }} />
           </th>
         </tr>
       </thead>

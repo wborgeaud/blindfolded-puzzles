@@ -12,6 +12,7 @@ function Piece({ color, symbol, squares }) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        fontSize: "1.3rem",
       }}
     >
       <div style={{ transform: "scale(1.5)", padding: "10px" }}>

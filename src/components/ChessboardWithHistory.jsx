@@ -24,17 +24,15 @@ export default function ChessboardWithHistory({
       >
         <div
           onClick={historyPush}
-          style={{ fontSize: "2rem", fontWeight: 1000 }}
+          style={{ fontSize: "2rem", fontWeight: 1000, cursor: "pointer" }}
         >
-          {" "}
-          {"<"}{" "}
+          {"<"}
         </div>
         <div
           onClick={historyPop}
-          style={{ fontSize: "2rem", fontWeight: 1000 }}
+          style={{ fontSize: "2rem", fontWeight: 1000, cursor: "pointer" }}
         >
-          {" "}
-          {">"}{" "}
+          {">"}
         </div>
       </div>
     </div>
