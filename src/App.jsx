@@ -4,8 +4,6 @@ import * as ChessJS from "chess.js";
 
 import React, { Component } from "react";
 
-import Select from "react-select";
-
 import ChessboardWithHistory from "./components/ChessboardWithHistory";
 import Pieces from "./components/Pieces";
 import MoveForm from "./components/MoveForm";
@@ -15,9 +13,10 @@ import ShowSolution from "./components/ShowSolution";
 import Hint from "./components/Hint";
 import FirstMove from "./components/FirstMove";
 import Thumbs from "./components/Thumbs";
+import MaxPiecesSelect from "./components/MaxPiecesSelect";
 import { squareStyle } from "./utils/square-style";
 
-export const URL = "http://localhost:8000/puzzles/";
+export const URL = "https://api.blindfoldedpuzzles.xyz/puzzles/";
 
 const Chess = typeof ChessJS === "function" ? ChessJS : ChessJS.Chess;
 
@@ -198,31 +197,12 @@ export default class App extends Component {
           >
             <div>
               <div>Maximum number of pieces</div>
-              <Select
-                options={[
-                  { value: 3, label: 3 },
-                  { value: 4, label: 4 },
-                  { value: 5, label: 5 },
-                  { value: 6, label: 6 },
-                  { value: 7, label: 7 },
-                  { value: 8, label: 8 },
-                  { value: 9, label: 9 },
-                  { value: 10, label: 10 },
-                  { value: 11, label: 11 },
-                  { value: 12, label: 12 },
-                  { value: 13, label: 13 },
-                  { value: 14, label: 14 },
-                  { value: 15, label: 15 },
-                ]}
-                onChange={({ value }) => {
-                  this.setState({ maxPieces: value });
-                }}
-                value={{
-                  value: this.state.maxPieces,
-                  label: this.state.maxPieces,
-                }}
+              <MaxPiecesSelect
+                maxPieces={this.state.maxPieces}
+                setMaxPieces={({ value }) =>
+                  this.setState({ maxPieces: value })
+                }
               />
-
               <button
                 style={{
                   borderRadius: "15px",
