@@ -191,7 +191,7 @@ export default class App extends Component {
   }
 
   setWrongPuzzle() {
-    if (this.state.wrong) {
+    if (this.state.wrong || this.state.solved) {
       return;
     }
     const newElo = updateElo(this.state.elo, this.state.rating, 0);

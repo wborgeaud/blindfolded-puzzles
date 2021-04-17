@@ -34,6 +34,9 @@ export default class MoveForm extends Component {
   }
 
   handleSubmit(event) {
+    if (this.state.value === "") {
+      return;
+    }
     if (
       ["", "+", "#"].some((suffix) =>
         [this.props.correct, this.props.correct.replace("x", "")].some(
