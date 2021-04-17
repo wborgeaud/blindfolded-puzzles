@@ -48,13 +48,13 @@ export default class MoveForm extends Component {
     ) {
       this.setState(
         { result: this.props.movesLeft === 1 ? "Solved!" : "Correct!" },
-        () => setTimeout(() => this.setState({ result: false }), 500)
+        () => setTimeout(() => this.setState({ result: false, value: "" }), 500)
       );
       this.props.makeMove();
     } else {
       this.props.setWrongPuzzle();
       this.setState({ result: "Wrong!" }, () =>
-        setTimeout(() => this.setState({ result: false }), 500)
+        setTimeout(() => this.setState({ result: false, value: "" }), 500)
       );
     }
     event.preventDefault();
