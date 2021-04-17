@@ -35,6 +35,7 @@ export default class MoveForm extends Component {
 
   handleSubmit(event) {
     if (this.state.value === "") {
+      event.preventDefault();
       return;
     }
     if (
