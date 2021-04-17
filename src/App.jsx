@@ -14,8 +14,10 @@ import Hint from "./components/Hint";
 import FirstMove from "./components/FirstMove";
 import Thumbs from "./components/Thumbs";
 import MaxPiecesSelect from "./components/MaxPiecesSelect";
+import Rating from "./components/Rating";
 import { squareStyle } from "./utils/square-style";
 import Hamburger from "./utils/hamburger.svg";
+import updateElo from "./utils/elo";
 
 export const URL = "https://api.blindfoldedpuzzles.xyz/puzzles/";
 
@@ -39,6 +41,9 @@ export default class App extends Component {
       history: [],
       maxPieces: 5,
       puzzle_id: 0,
+      wrong: false,
+      elo: 1200,
+      eloDelta: null,
     };
 
     this.fetchPuzzle = this.fetchPuzzle.bind(this);
@@ -49,6 +54,7 @@ export default class App extends Component {
     this.endGame = this.endGame.bind(this);
     this.historyPush = this.historyPush.bind(this);
     this.historyPop = this.historyPop.bind(this);
+    this.setWrongPuzzle = this.setWrongPuzzle.bind(this);
   }
 
   async fetchPuzzle() {
@@ -69,10 +75,18 @@ export default class App extends Component {
       history: [],
       maxPieces: this.state.maxPieces,
       puzzle_id: data.id,
+      wrong: false,
+      eloDelta: null,
     });
   }
 
   async componentDidMount() {
+    let elo = JSON.parse(window.localStorage.getItem("elo"));
+    if (elo !== null) {
+      this.setState({ elo: elo.elo });
+    } else {
+      window.localStorage.setItem("elo", JSON.stringify({ elo: 1200 }));
+    }
     await this.fetchPuzzle();
   }
 
@@ -83,6 +97,7 @@ export default class App extends Component {
       showPieces: false,
       showSquares: false,
     }));
+    this.setWrongPuzzle();
   }
 
   togglePieces() {
@@ -117,6 +132,13 @@ export default class App extends Component {
         history: [...this.state.history, this.state.moves[0]],
         solved: true,
       });
+      if (!this.state.wrong) {
+        let newElo = updateElo(this.state.elo, this.state.rating, 1);
+        this.setState({
+          elo: newElo,
+          eloDelta: newElo - this.state.elo,
+        });
+      }
     } else {
       this.state.game.move(this.state.moves[1]);
       this.setState({
@@ -166,6 +188,18 @@ export default class App extends Component {
     }
     this.state.game.move(history.pop());
     this.setState({ history, fen: this.state.game.fen() });
+  }
+
+  setWrongPuzzle() {
+    if (this.state.wrong) {
+      return;
+    }
+    const newElo = updateElo(this.state.elo, this.state.rating, 0);
+    this.setState({
+      wrong: true,
+      elo: newElo,
+      eloDelta: newElo - this.state.elo,
+    });
   }
 
   render() {
@@ -243,6 +277,7 @@ export default class App extends Component {
               showSquares={this.state.showSquares}
               showPieces={this.state.showPieces}
             />
+            <Rating elo={this.state.elo} eloDelta={this.state.eloDelta} />
           </div>
         </div>
 
@@ -297,6 +332,7 @@ export default class App extends Component {
             makeMove={this.makeMove}
             id={this.state.id}
             movesLeft={this.state.moves.length}
+            setWrongPuzzle={this.setWrongPuzzle}
           />
           <div
             style={{
@@ -306,9 +342,18 @@ export default class App extends Component {
               padding: "10px",
             }}
           >
-            <Hint firstMove={this.state.moves[0]} />
-            <FirstMove onClick={this.makeMove} />
-            <ShowSolution onClick={this.endGame} />
+            <Hint
+              firstMove={this.state.moves[0]}
+              setWrongPuzzle={this.setWrongPuzzle}
+            />
+            <FirstMove
+              onClick={this.makeMove}
+              setWrongPuzzle={this.setWrongPuzzle}
+            />
+            <ShowSolution
+              onClick={this.endGame}
+              setWrongPuzzle={this.setWrongPuzzle}
+            />
             {window.innerWidth < 800 && (
               <div>
                 <button

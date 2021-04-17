@@ -123,6 +123,12 @@
   padding: 50px;
 }
 
+br {
+  display: block;
+  content: "";
+  margin-top: 30px;
+}
+
 @media (max-width: 800px) {
   .scale15 {
     transform: scale(1);
@@ -145,6 +151,9 @@
     z-index: 100;
     overflow-x: hidden;
     transition: 0.15s;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
   }
   .close-sidebar {
     display: inline;

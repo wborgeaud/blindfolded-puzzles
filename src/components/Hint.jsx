@@ -25,6 +25,7 @@ function Result({ visible }) {
         visibility: visible ? "visible" : "hidden",
         color: "yellow",
         textShadow: "-5px -5px black",
+        zIndex: 200,
       }}
     >
       {getPiece(visible[0])}
@@ -50,11 +51,12 @@ export default class Hint extends Component {
             padding: "10px",
           }}
           className="hoveropacity"
-          onClick={() =>
+          onClick={() => {
+            this.props.setWrongPuzzle();
             this.setState({ visible: this.props.firstMove }, () =>
               setTimeout(() => this.setState({ visible: false }), 500)
-            )
-          }
+            );
+          }}
         >
           Hint
         </button>

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function FirstMove({ onClick }) {
+export default function FirstMove({ onClick, setWrongPuzzle }) {
   return (
     <div style={{ padding: "0px 10px" }}>
       <button
@@ -11,7 +11,10 @@ export default function FirstMove({ onClick }) {
           padding: "10px",
         }}
         className="hoveropacity"
-        onClick={onClick}
+        onClick={() => {
+          onClick();
+          setWrongPuzzle();
+        }}
       >
         1st move
       </button>

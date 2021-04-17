@@ -48,6 +48,7 @@ export default class MoveForm extends Component {
       );
       this.props.makeMove();
     } else {
+      this.props.setWrongPuzzle();
       this.setState({ result: "Wrong!" }, () =>
         setTimeout(() => this.setState({ result: false }), 500)
       );

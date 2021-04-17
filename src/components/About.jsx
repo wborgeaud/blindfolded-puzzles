@@ -12,10 +12,8 @@ export default function About() {
         alignItems: "center",
         fontSize: "1.5rem",
         fontWeight: "600",
-        lineHeight: 2,
       }}
     >
-      {/* Welcome to <span style={{ color: "green" }}>Blindfolded puzzles</span>! And enjoy the ride amongst us. */}
       <div style={{ maxWidth: "80%", textAlign: "justify" }}>
         Blindfolded Puzzles is an app to train your chess visualization by
         solving puzzles without a board.

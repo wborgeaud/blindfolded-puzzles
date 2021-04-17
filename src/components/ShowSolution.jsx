@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ShowSolution({ onClick }) {
+export default function ShowSolution({ onClick, setWrongPuzzle }) {
   return (
     <div style={{ padding: "0px 10px" }}>
       <button
@@ -11,7 +11,10 @@ export default function ShowSolution({ onClick }) {
           padding: "10px",
         }}
         className="hoveropacity"
-        onClick={onClick}
+        onClick={() => {
+          onClick();
+          setWrongPuzzle();
+        }}
       >
         Solution
       </button>
