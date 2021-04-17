@@ -13,22 +13,26 @@ export default function Moves({ moves, starting_color }) {
   }
 
   return (
-    <table style={{ fontSize: "1.3rem", width: "150px", textAlign: "center" }}>
-      <thead>
-        <tr>
-          <th colSpan="2" style={{ fontWeight: "bolder" }}>
-            Moves <hr style={{ backgroundColor: "black" }} />
-          </th>
-        </tr>
-      </thead>
-      <tbody style={{ fontStyle: "italic" }}>
-        {chunks.map((chunk, i) => (
-          <tr key={i}>
-            <td>{chunk[0]}</td>
-            <td>{chunk[1]}</td>
+    <div>
+      <table
+        style={{ fontSize: "1.3rem", width: "150px", textAlign: "center" }}
+      >
+        <thead>
+          <tr>
+            <th colSpan="2" style={{ fontWeight: "bolder" }}>
+              Moves <hr style={{ backgroundColor: "black" }} />
+            </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody style={{ fontStyle: "italic" }}>
+          {chunks.map((chunk, i) => (
+            <tr key={i}>
+              <td>{chunk[0]}</td>
+              <td>{chunk[1]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

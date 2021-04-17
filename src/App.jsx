@@ -15,6 +15,7 @@ import FirstMove from "./components/FirstMove";
 import Thumbs from "./components/Thumbs";
 import MaxPiecesSelect from "./components/MaxPiecesSelect";
 import { squareStyle } from "./utils/square-style";
+import Hamburger from "./utils/hamburger.svg";
 
 export const URL = "https://api.blindfoldedpuzzles.xyz/puzzles/";
 
@@ -169,29 +170,39 @@ export default class App extends Component {
 
   render() {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          height: "100%",
-        }}
-      >
+      <div className="main">
         <div
-          style={{
-            height: "100%",
-            backgroundColor: "#999999",
-            marginRight: "40px",
+          id="open-sidebar"
+          className="open-sidebar"
+          onClick={() => {
+            document.getElementById("sidebar").style.width = "150px";
+            document.getElementById("open-sidebar").style.display = "none";
           }}
         >
+          <img
+            alt="Hamburger"
+            src={Hamburger}
+            style={{ height: "2rem", width: "1rem" }}
+          />
+        </div>
+        <div className="sidebar" id="sidebar">
+          <div
+            className="close-sidebar"
+            onClick={() => {
+              document.getElementById("sidebar").style.width = "0px";
+              document.getElementById("open-sidebar").style.display = "inline";
+            }}
+          >
+            &times;
+          </div>
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-around",
+              height: "80%",
               width: "100px",
               minWidth: "100px",
-              height: "80%",
               padding: "10px",
             }}
           >
@@ -236,10 +247,10 @@ export default class App extends Component {
         </div>
 
         <div
+          className="height80"
           style={{
             display: "flex",
             flexDirection: "column",
-            height: "80vh",
             justifyContent: "space-around",
             flexGrow: 2,
             alignItems: "center",
@@ -260,11 +271,10 @@ export default class App extends Component {
             to play
           </div>
           <div
+            className="width50"
             style={{
               display: "flex",
-              flexDirection: "row",
               justifyContent: "space-between",
-              width: "50%",
             }}
           >
             <Pieces
@@ -276,6 +286,12 @@ export default class App extends Component {
               starting_color={this.state.turn}
             />
           </div>
+          {window.innerWidth <= 800 && this.state.solved && (
+            <div style={{ padding: "20px" }}>
+              <Thumbs puzzle_id={this.state.puzzle_id} />
+              <div className="solvedname">Solved</div>
+            </div>
+          )}
           <MoveForm
             correct={this.state.moves[0]}
             makeMove={this.makeMove}
@@ -287,32 +303,63 @@ export default class App extends Component {
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
+              padding: "10px",
             }}
           >
             <Hint firstMove={this.state.moves[0]} />
             <FirstMove onClick={this.makeMove} />
             <ShowSolution onClick={this.endGame} />
+            {window.innerWidth < 800 && (
+              <div>
+                <button
+                  style={{
+                    borderRadius: "15px",
+                    color: "white",
+                    fontWeight: "bold",
+                    fontSize: "1rem",
+                    padding: "10px",
+                  }}
+                  className="hovergreen"
+                  onClick={this.fetchPuzzle}
+                >
+                  New puzzle
+                </button>
+              </div>
+            )}
           </div>
         </div>
         {this.state.showBoard && (
-          <div style={{ padding: "50px", resize: "both", overflow: "auto" }}>
+          <div
+            className="chessboard"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+            }}
+          >
             {this.state.showPieces ? (
               <ChessboardWithHistory
-                width={Math.round(window.innerWidth * 0.3)}
+                width={Math.round(
+                  window.innerWidth * (window.innerWidth > 800 ? 0.3 : 0.8)
+                )}
                 position={this.state.fen}
                 historyPop={this.historyPop}
                 historyPush={this.historyPush}
               />
             ) : this.state.showSquares ? (
               <ChessboardWithHistory
-                width={Math.round(window.innerWidth * 0.3)}
+                width={Math.round(
+                  window.innerWidth * (window.innerWidth > 800 ? 0.3 : 0.8)
+                )}
                 squareStyles={squareStyle(this.state.game)}
                 historyPop={this.historyPop}
                 historyPush={this.historyPush}
               />
             ) : (
               <ChessboardWithHistory
-                width={Math.round(window.innerWidth * 0.3)}
+                width={Math.round(
+                  window.innerWidth * (window.innerWidth > 800 ? 0.3 : 0.8)
+                )}
                 historyPop={this.historyPop}
                 historyPush={this.historyPush}
               />

@@ -57,7 +57,7 @@ export default class MoveForm extends Component {
 
   render() {
     return (
-      <div>
+      <div style={{ width: "80%" }}>
         <form
           style={{
             display: "flex",
@@ -68,12 +68,13 @@ export default class MoveForm extends Component {
         >
           <label>
             <input
+              // className="width100"
               style={{
                 borderRadius: "15px",
                 height: "6rem",
                 fontSize: "3rem",
-                width: "100%",
                 textAlign: "center",
+                width: "100%",
               }}
               placeholder="Move"
               type="text"
